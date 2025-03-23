@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Telemedicine Kiosk - Inclusive & Guided</title>
+  <style>
+    /* Global Styles for Readability & Inclusivity */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    header, nav, section, footer {
+      padding: 20px;
+      margin: 10px;
+    }
+    /* Navigation Styles */
+    nav {
+      background-color: #0056b3;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 20px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    /* Container for sections */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #f9f9f9;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+    form {
+      margin: 20px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .button {
+      background-color: #0056b3;
+      color: #fff;
+      border: none;
+      padding: 15px 25px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 1.1em;
+      margin: 5px 0;
+    }
+    .button:hover {
+      background-color: #003f7f;
+    }
+    .hidden {
+      display: none;
+    }
+    .status {
+      margin: 15px 0;
+      font-style: italic;
+      color: green;
+      font-size: 1.1em;
+    }
+    /* Doctor Card Styles */
+    #doctorDeckContainer {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 5px;
+      background: #fff;
+      margin-bottom: 20px;
+      min-height: 200px;
+    }
+    #doctorCard {
+      text-align: center;
+    }
+    /* Modal Overlay for Infographics */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content img {
+      max-width: 100%;
+      height: auto;
+    }
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      cursor: pointer;
+      background: #0056b3;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+    /* Guided Tour Overlay */
+    #guidedTourOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      display: none;
+      z-index: 1100;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #guidedTourContent {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #guidedTourContent p {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    #guidedTourButtons button {
+      margin: 0 10px;
+    }
+    /* Accessibility Controls */
+    .accessibility-controls {
+      text-align: center;
+      margin: 10px 0;
+    }
+    /* Highlighting for Guided Tour Target */
+    .tour-highlight {
+      box-shadow: 0 0 10px 4px yellow;
+      transition: box-shadow 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Accessibility, Language Selector, and Guided Tour Toggle -->
+  <header>
+    <h1 id="welcomeTitle">Welcome to the Telemedicine Kiosk</h1>
+    <p id="welcomeMessage" style="text-align: center;">
+      Designed for ease-of-use, cultural sensitivity, and inclusivity.
+    </p>
+    <div class="accessibility-controls">
+      <button class="button" onclick="adjustFontSize(1)">A+</button>
+      <button class="button" onclick="adjustFontSize(-1)">A-</button>
+      <button class="button" id="toggleTourButton" onclick="startGuidedTour()">Start Guided Tour</button>
+    </div>
+    <div style="text-align: center; margin-top: 10px;">
+      <label for="languageSelector">Select Language: </label>
+      <select id="languageSelector" onchange="changeLanguage()">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <!-- Add more languages as needed -->
+      </select>
+    </div>
+  </header>
+  
+  <!-- Infographic Guidance Modal -->
+  <div id="infographicModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeInfographic()">Close</button>
+      <h2 id="infographicTitle">Guidance</h2>
+      <img id="infographicImage" src="" alt="Infographic Guidance">
+      <p id="infographicText">Step-by-step guidance...</p>
+    </div>
+  </div>
+  
+  <!-- Guided Tour Overlay -->
+  <div id="guidedTourOverlay">
+    <div id="guidedTourContent">
+      <h2 id="tourStepTitle">Guided Tour</h2>
+      <p id="tourStepText">This is a guided tour.</p>
+      <div id="guidedTourButtons">
+        <button class="button" id="prevTourButton" onclick="prevTourStep()">Previous</button>
+        <button class="button" id="nextTourButton" onclick="nextTourStep()">Next</button>
+        <button class="button" id="endTourButton" onclick="endGuidedTour()">Finish Tour</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Navigation -->
+  <nav>
+    <a href="#register">Register</a>
+    <a href="#preconsultation">Pre-Consultation</a>
+    <a href="#consultation">Consultation</a>
+    <a href="#prescription">Prescription</a>
+  </nav>
+  
+  <div class="container">
+    <!-- Registration Section -->
+    <section id="register">
+      <h1 id="registrationTitle">Patient Registration 
+        <button class="button" style="font-size:0.8em;" onclick="showInfographic('Registration', 'infographic-registration.jpg', 'Fill in your basic information.');">Info</button>
+      </h1>
+      <form id="registrationForm">
+        <!-- Basic Info -->
+        <label for="name" id="nameLabel">Full Name:</label>
+        <input type="text" id="name" required>
+        
+        <label for="dob" id="dobLabel">Date of Birth:</label>
+        <input type="date" id="dob" required>
+        
+        <label for="contact" id="contactLabel">Contact Number:</label>
+        <input type="tel" id="contact" required>
+        
+        <label for="email" id="emailLabel">Email:</label>
+        <input type="email" id="email" required>
+        
+        <!-- Cultural/Ethnic Background -->
+        <label for="culturalBackground" id="culturalLabel">
+          Cultural/Ethnic Background (optional):
+        </label>
+        <select id="culturalBackground" onchange="handleCulturalChange()">
+          <option value="default">Prefer not to say</option>
+          <option value="asian">Asian</option>
+          <option value="black">Black/African descent</option>
+          <option value="hispanic">Hispanic/Latino</option>
+          <option value="white">White/Caucasian</option>
+          <option value="other">Other</option>
+        </select>
+        <!-- Extra text field for 'Other' cultural background -->
+        <div id="otherCulturalContainer" class="hidden">
+          <label for="otherCultural" id="otherCulturalLabel">
+            Please specify your cultural background:
+          </label>
+          <input type="text" id="otherCultural">
+        </div>
+        
+        <!-- Religion Field -->
+        <label for="religion" id="religionLabel">Religion (optional):</label>
+        <select id="religion" onchange="handleReligionChange()">
+          <option value="default">Prefer not to say</option>
+          <option value="christianity">Christianity</option>
+          <option value="islam">Islam</option>
+          <option value="hinduism">Hinduism</option>
+          <option value="buddhism">Buddhism</option>
+          <option value="other">Other</option>
+        </select>
+        <!-- Extra text field for 'Other' religion -->
+        <div id="otherReligionContainer" class="hidden">
+          <label for="otherReligion" id="otherReligionLabel">
+            Please specify your religion:
+          </label>
+          <input type="text" id="otherReligion">
+        </div>
+        
+        <!-- Additional Preferences Section -->
+        <div id="culturalConsiderationsSection" class="hidden">
+          <h2>Additional Preferences</h2>
+          <!-- Preferred Doctor Gender -->
+          <label for="preferredDoctorGender" id="doctorGenderLabel">
+            Preferred Doctor Gender:
+          </label>
+          <select id="preferredDoctorGender">
+            <option value="noPreference">No Preference</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+          </select>
+          <!-- Preferred Communication Style (optional) -->
+          <label for="commStyle" id="commStyleLabel">
+            Preferred Communication Style:
+          </label>
+          <select id="commStyle">
+            <option value="visual">Visual (images/infographics)</option>
+            <option value="text">Text-based</option>
+            <option value="audio">Audio</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="button" id="registerButton">Register</button>
+      </form>
+      <div id="registrationStatus" class="status"></div>
+    </section>
+    
+    <!-- Pre-Consultation Section -->
+    <section id="preconsultation" class="hidden">
+      <h1 id="preConsultTitle">Pre-Consultation 
+        <button class="button" style="font-size:0.8em;" onclick="showInfographic('Pre-Consultation', 'infographic-preconsult.jpg', 'Describe your condition and follow the guided prompts.');">Info</button>
+      </h1>
+      <form id="preConsultForm">
+        <label for="condition" id="conditionLabel">Describe your condition:</label>
+        <textarea id="condition" required placeholder="Enter symptoms or details..."></textarea>
+        <button type="button" class="button" onclick="analyzeCondition()" id="preConsultButton">
+          Submit Condition
+        </button>
+      </form>
+      <div id="testRecommendations" class="status"></div>
+    </section>
+    
+    <!-- Data Upload Section -->
+    <section id="dataUpload" class="hidden">
+      <h1 id="dataUploadTitle">Upload Test Data / Images 
+        <button class="button" style="font-size:0.8em;" onclick="showInfographic('Data Upload', 'infographic-dataupload.jpg', 'Follow the instructions to upload your test data or images.');">Info</button>
+      </h1>
+      <form id="uploadForm">
+        <label for="testImage" id="testImageLabel">Upload an image (if applicable):</label>
+        <input type="file" id="testImage" accept="image/*">
+        
+        <label for="bp" id="bpLabel">Blood Pressure (mmHg):</label>
+        <input type="text" id="bp" placeholder="e.g., 120/80">
+        
+        <label for="temp" id="tempLabel">Temperature (°C):</label>
+        <input type="number" step="0.1" id="temp" placeholder="e.g., 37.0">
+        
+        <button type="button" class="button" onclick="submitTestData()" id="uploadButton">
+          Submit Test Data
+        </button>
+      </form>
+      <div id="uploadStatus" class="status"></div>
+    </section>
+    
+    <!-- Consultation Section with Doctor Matching Deck -->
+    <section id="consultation" class="hidden">
+      <h1 id="consultationTitle">Doctor Matching 
+        <button class="button" style="font-size:0.8em;" onclick="showInfographic('Doctor Matching', 'infographic-doctormatch.jpg', 'Swipe through potential matches and select a doctor that suits your needs.');">Info</button>
+      </h1>
+      <p id="consultationMessage">
+        Based on your details and preferences, here are some potential matches. Please swipe through the available doctors.
+      </p>
+      <!-- Doctor Deck Container -->
+      <div id="doctorDeckContainer">
+        <div id="doctorCard">
+          <!-- Doctor info will be populated here -->
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 10px;">
+        <button class="button" onclick="previousDoctor()">Previous</button>
+        <button class="button" onclick="nextDoctor()">Next</button>
+      </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="button" onclick="selectDoctor()">Select Doctor</button>
+      </div>
+    </section>
+    
+    <!-- Prescription Section -->
+    <section id="prescription" class="hidden">
+      <h1 id="prescriptionTitle">Prescription 
+        <button class="button" style="font-size:0.8em;" onclick="showInfographic('Prescription', 'infographic-prescription.jpg', 'Your prescription is ready. You may print it or have it sent electronically.');">Info</button>
+      </h1>
+      <div id="prescriptionDetails">
+        <p id="prescriptionMessage">
+          Your prescription is ready. You may print it here or have it sent to your chosen pharmacy.
+        </p>
+      </div>
+      <button type="button" class="button" onclick="printPrescription()" id="printButton">
+        Print Prescription
+      </button>
+      <button type="button" class="button" onclick="sendToPharmacy()" id="sendButton">
+        Send to Pharmacy
+      </button>
+    </section>
+  </div>
+  
+  <script>
+    // Accessibility: Adjust Font Size
+    function adjustFontSize(change) {
+      const currentSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+      document.body.style.fontSize = (currentSize + change) + "px";
+    }
+
+    // Translation dictionary for multilingual support
+    const translations = {
+      en: {
+        welcomeTitle: "Welcome to the Telemedicine Kiosk",
+        welcomeMessage: "Designed for ease-of-use, cultural sensitivity, and inclusivity.",
+        registrationTitle: "Patient Registration",
+        nameLabel: "Full Name:",
+        dobLabel: "Date of Birth:",
+        contactLabel: "Contact Number:",
+        emailLabel: "Email:",
+        culturalLabel: "Cultural/Ethnic Background (optional):",
+        registerButton: "Register",
+        preConsultTitle: "Pre-Consultation",
+        conditionLabel: "Describe your condition:",
+        preConsultButton: "Submit Condition",
+        dataUploadTitle: "Upload Test Data / Images",
+        testImageLabel: "Upload an image (if applicable):",
+        bpLabel: "Blood Pressure (mmHg):",
+        tempLabel: "Temperature (°C):",
+        uploadButton: "Submit Test Data",
+        consultationTitle: "Doctor Matching",
+        consultationMessage: "Based on your details and preferences, here are some potential matches. Please swipe through the available doctors.",
+        printButton: "Print Prescription",
+        sendButton: "Send to Pharmacy",
+        prescriptionTitle: "Prescription",
+        prescriptionMessage: "Your prescription is ready. You may print it here or have it sent to your chosen pharmacy."
+      },
+      es: {
+        welcomeTitle: "Bienvenido al Quiosco de Telemedicina",
+        welcomeMessage: "Diseñado para facilidad de uso, sensibilidad cultural e inclusión.",
+        registrationTitle: "Registro de Pacientes",
+        nameLabel: "Nombre Completo:",
+        dobLabel: "Fecha de Nacimiento:",
+        contactLabel: "Número de Contacto:",
+        emailLabel: "Correo Electrónico:",
+        culturalLabel: "Antecedentes Culturales/Étnicos (opcional):",
+        registerButton: "Registrar",
+        preConsultTitle: "Pre-Consulta",
+        conditionLabel: "Describa su condición:",
+        preConsultButton: "Enviar Condición",
+        dataUploadTitle: "Subir Datos/Imágenes de Prueba",
+        testImageLabel: "Suba una imagen (si aplica):",
+        bpLabel: "Presión Arterial (mmHg):",
+        tempLabel: "Temperatura (°C):",
+        uploadButton: "Enviar Datos de Prueba",
+        consultationTitle: "Selección de Doctor",
+        consultationMessage: "Según sus datos y preferencias, estos son algunos candidatos. Deslice para ver las opciones.",
+        printButton: "Imprimir Receta",
+        sendButton: "Enviar a Farmacia",
+        prescriptionTitle: "Receta",
+        prescriptionMessage: "Su receta está lista. Puede imprimirla o enviarla a la farmacia de su elección."
+      }
+    };
+
+    // Function to change language based on selection
+    function changeLanguage() {
+      const selectedLang = document.getElementById('languageSelector').value;
+      document.getElementById('welcomeTitle').innerText = translations[selectedLang].welcomeTitle;
+      document.getElementById('welcomeMessage').innerText = translations[selectedLang].welcomeMessage;
+      document.getElementById('registrationTitle').innerText = translations[selectedLang].registrationTitle;
+      document.getElementById('nameLabel').innerText = translations[selectedLang].nameLabel;
+      document.getElementById('dobLabel').innerText = translations[selectedLang].dobLabel;
+      document.getElementById('contactLabel').innerText = translations[selectedLang].contactLabel;
+      document.getElementById('emailLabel').innerText = translations[selectedLang].emailLabel;
+      document.getElementById('culturalLabel').innerText = translations[selectedLang].culturalLabel;
+      document.getElementById('registerButton').innerText = translations[selectedLang].registerButton;
+      document.getElementById('preConsultTitle').innerText = translations[selectedLang].preConsultTitle;
+      document.getElementById('conditionLabel').innerText = translations[selectedLang].conditionLabel;
+      document.getElementById('preConsultButton').innerText = translations[selectedLang].preConsultButton;
+      document.getElementById('dataUploadTitle').innerText = translations[selectedLang].dataUploadTitle;
+      document.getElementById('testImageLabel').innerText = translations[selectedLang].testImageLabel;
+      document.getElementById('bpLabel').innerText = translations[selectedLang].bpLabel;
+      document.getElementById('tempLabel').innerText = translations[selectedLang].tempLabel;
+      document.getElementById('uploadButton').innerText = translations[selectedLang].uploadButton;
+      document.getElementById('consultationTitle').innerText = translations[selectedLang].consultationTitle;
+      document.getElementById('consultationMessage').innerText = translations[selectedLang].consultationMessage;
+      document.getElementById('prescriptionTitle').innerText = translations[selectedLang].prescriptionTitle;
+      document.getElementById('prescriptionMessage').innerText = translations[selectedLang].prescriptionMessage;
+      document.getElementById('printButton').innerText = translations[selectedLang].printButton;
+      document.getElementById('sendButton').innerText = translations[selectedLang].sendButton;
+    }
+
+    // Handle changes for Cultural/Ethnic Background field
+    function handleCulturalChange() {
+      const culturalValue = document.getElementById('culturalBackground').value;
+      if (culturalValue === "other") {
+        document.getElementById('otherCulturalContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('otherCulturalContainer').classList.add('hidden');
+      }
+      checkCulturalConsiderations();
+    }
+    
+    // Handle changes for Religion field
+    function handleReligionChange() {
+      const religionValue = document.getElementById('religion').value;
+      if (religionValue === "other") {
+        document.getElementById('otherReligionContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('otherReligionContainer').classList.add('hidden');
+      }
+      checkCulturalConsiderations();
+    }
+    
+    // Check whether to display additional preferences
+    function checkCulturalConsiderations() {
+      const cultural = document.getElementById('culturalBackground').value;
+      const religion = document.getElementById('religion').value;
+      if (cultural !== "default" || religion !== "default") {
+        document.getElementById('culturalConsiderationsSection').classList.remove('hidden');
+      } else {
+        document.getElementById('culturalConsiderationsSection').classList.add('hidden');
+      }
+    }
+    
+    // Global doctor list with more options
+    const doctors = [
+      { name: "Dr. Sarah Johnson", gender: "female", specialization: "General Medicine", experience: "10 years", bio: "Experienced in family and community care with a compassionate approach." },
+      { name: "Dr. Emma Brown", gender: "female", specialization: "Internal Medicine", experience: "9 years", bio: "Expert in heart health and patient wellness." },
+      { name: "Dr. Michael Lee", gender: "male", specialization: "Internal Medicine", experience: "8 years", bio: "Expert in chronic disease management with patient-centered care." },
+      { name: "Dr. John Smith", gender: "male", specialization: "General Medicine", experience: "15 years", bio: "Committed to holistic and preventive care." },
+      { name: "Dr. Aisha Rahman", gender: "female", specialization: "Pediatrics", experience: "12 years", bio: "Specializes in pediatric care with deep cultural understanding in family health." },
+      { name: "Dr. Robert Williams", gender: "male", specialization: "Surgery", experience: "12 years", bio: "Skilled in modern surgical techniques and compassionate care." },
+      { name: "Dr. Olivia Davis", gender: "female", specialization: "Dermatology", experience: "7 years", bio: "Specializes in skin conditions and cosmetic dermatology." }
+    ];
+    let filteredDoctors = [];  // Will store the subset of doctors after filtering
+    let currentDoctorIndex = 0;
+
+    // Filter doctors based on the patient's preferred doctor gender
+    function filterDoctors() {
+      const preference = document.getElementById('preferredDoctorGender').value;
+      if (preference === "female") {
+        filteredDoctors = doctors.filter(doc => doc.gender === "female");
+      } else if (preference === "male") {
+        filteredDoctors = doctors.filter(doc => doc.gender === "male");
+      } else {
+        filteredDoctors = [...doctors];
+      }
+      currentDoctorIndex = 0;
+    }
+
+    // Update the doctor card display using the filtered list
+    function updateDoctorCard() {
+      const card = document.getElementById('doctorCard');
+      if (filteredDoctors.length === 0) {
+        card.innerHTML = `<p>No matching doctor found based on your preferences.</p>`;
+      } else {
+        const doctor = filteredDoctors[currentDoctorIndex];
+        card.innerHTML = `
+          <h2>${doctor.name}</h2>
+          <p><strong>Gender:</strong> ${doctor.gender.charAt(0).toUpperCase() + doctor.gender.slice(1)}</p>
+          <p><strong>Specialization:</strong> ${doctor.specialization}</p>
+          <p><strong>Experience:</strong> ${doctor.experience}</p>
+          <p>${doctor.bio}</p>
+        `;
+      }
+    }
+    
+    function nextDoctor() {
+      if(filteredDoctors.length === 0) return;
+      currentDoctorIndex = (currentDoctorIndex + 1) % filteredDoctors.length;
+      updateDoctorCard();
+    }
+    
+    function previousDoctor() {
+      if(filteredDoctors.length === 0) return;
+      currentDoctorIndex = (currentDoctorIndex - 1 + filteredDoctors.length) % filteredDoctors.length;
+      updateDoctorCard();
+    }
+    
+    function selectDoctor() {
+      if(filteredDoctors.length === 0) {
+        alert("No matching doctor available to select.");
+        return;
+      }
+      const doctor = filteredDoctors[currentDoctorIndex];
+      alert(`Connecting you to ${doctor.name}...\nSpecialization: ${doctor.specialization}`);
+      document.getElementById('prescription').classList.remove('hidden');
+      location.hash = '#prescription';
+    }
+
+    // Handle patient registration submission
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('registrationStatus').innerText = "Registration successful!";
+      document.getElementById('preconsultation').classList.remove('hidden');
+      location.hash = '#preconsultation';
+    });
+
+    // Simulated AI analysis of patient's condition
+    function analyzeCondition() {
+      const condition = document.getElementById('condition').value.trim();
+      if (!condition) {
+        alert("Please describe your condition.");
+        return;
+      }
+      let recommendations = "";
+      const lowerCondition = condition.toLowerCase();
+      if (lowerCondition.includes("fever") || lowerCondition.includes("cough")) {
+        recommendations = "Please take your temperature and upload an image of your throat.";
+      } else {
+        recommendations = "Please provide an image of the affected area and record your blood pressure.";
+      }
+      document.getElementById('testRecommendations').innerText = recommendations;
+      document.getElementById('dataUpload').classList.remove('hidden');
+      location.hash = '#dataUpload';
+    }
+
+    // Handle submission of test data
+    function submitTestData() {
+      document.getElementById('uploadStatus').innerText = "Test data submitted successfully!";
+      // Filter doctors based on the preferred doctor gender provided in registration
+      filterDoctors();
+      // Show the doctor matching deck in the consultation section
+      document.getElementById('consultation').classList.remove('hidden');
+      location.hash = '#consultation';
+      updateDoctorCard();
+    }
+
+    // Simulated prescription handling functions
+    function printPrescription() {
+      alert("Prescription sent to printer.");
+    }
+    function sendToPharmacy() {
+      alert("Prescription sent to your chosen pharmacy.");
+    }
+    
+    // Infographic Modal Functions
+    function showInfographic(title, imgSrc, text) {
+      document.getElementById('infographicTitle').innerText = title + " Guidance";
+      document.getElementById('infographicImage').src = imgSrc; // Update with actual image path
+      document.getElementById('infographicText').innerText = text;
+      document.getElementById('infographicModal').style.display = "flex";
+    }
+    function closeInfographic() {
+      document.getElementById('infographicModal').style.display = "none";
+    }
+    
+    // Guided Tour Functions
+    const tourSteps = [
+      { target: "#register", text: "This is the Registration section. Enter your basic details here." },
+      { target: "#preconsultation", text: "In Pre-Consultation, describe your condition so we can help guide you." },
+      { target: "#dataUpload", text: "Upload any test data or images in this section." },
+      { target: "#consultation", text: "This is the Doctor Matching section. Swipe to see potential doctor matches." },
+      { target: "#prescription", text: "Finally, this is the Prescription section where your prescription is prepared." }
+    ];
+    let currentTourStep = 0;
+
+    function startGuidedTour() {
+      currentTourStep = 0;
+      document.getElementById('guidedTourOverlay').style.display = "block";
+      updateTourStep();
+    }
+
+    function updateTourStep() {
+      // Remove previous highlight if any
+      document.querySelectorAll('.tour-highlight').forEach(el => {
+        el.classList.remove('tour-highlight');
+      });
+      const step = tourSteps[currentTourStep];
+      const targetEl = document.querySelector(step.target);
+      if (targetEl) {
+        targetEl.classList.add('tour-highlight');
+        // Scroll into view
+        targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      document.getElementById('tourStepText').innerText = step.text;
+      // Disable Previous button on first step
+      document.getElementById('prevTourButton').disabled = (currentTourStep === 0);
+      // Change Next button text to "Finish" on last step
+      document.getElementById('nextTourButton').innerText = (currentTourStep === tourSteps.length - 1) ? "Finish" : "Next";
+    }
+
+    function nextTourStep() {
+      if (currentTourStep < tourSteps.length - 1) {
+        currentTourStep++;
+        updateTourStep();
+      } else {
+        endGuidedTour();
+      }
+    }
+
+    function prevTourStep() {
+      if (currentTourStep > 0) {
+        currentTourStep--;
+        updateTourStep();
+      }
+    }
+
+    function endGuidedTour() {
+      document.getElementById('guidedTourOverlay').style.display = "none";
+      // Remove any highlight
+      document.querySelectorAll('.tour-highlight').forEach(el => {
+        el.classList.remove('tour-highlight');
+      });
+    }
+  </script>
+</body>
+</html>
